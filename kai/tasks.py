@@ -1,5 +1,6 @@
 from background_task import background
 from django.conf import settings
+from django.utils import timezone
 
 from .models import Quotation
 
@@ -46,6 +47,8 @@ def search_avaliable_seat_task(qid):
                 rson = r.json()
 
             r.raise_for_status()
+
+            quote_objs.update(last_record_on=timezone.now())
 
         except:
             pass
