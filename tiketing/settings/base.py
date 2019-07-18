@@ -118,3 +118,6 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'env_root', 'static_root')
 
 KAI_BASE_API = config('KAI_BASE_API')
 KAI_TOKEN = config('KAI_TOKEN')
+
+KAI_TOKEN_REQUEST = config('KAI_TOKEN_REQUEST')
+KAI_TOKEN_NOTIF = config('KAI_TOKEN_NOTIF')

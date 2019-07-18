@@ -10,7 +10,8 @@ class QuotationAdmin(admin.ModelAdmin):
     list_display = [
         'quote_id', 'dep_code', 'des_code',
         'status',
-        'create_on'
+        'create_on',
+        'last_record_on'
     ]
 
     fieldsets = [

@@ -1,6 +1,7 @@
 from django.db import models
 
 from core.models import ComondBase
+from django.utils import timezone
 
 from .utils import get_quote_code
 
@@ -52,6 +53,7 @@ class Quotation(ComondBase):
     status = models.PositiveIntegerField(choices=STATUS_LIST, default=PROGRESS)
 
     telegram = models.CharField(max_length=20, blank=True)
+    last_record_on = models.DateTimeField(verbose_name='Last Record', default=timezone.now)
 
     def __str__(self):
         return self.quote_id

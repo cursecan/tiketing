@@ -125,7 +125,7 @@ def error(bot, update):
     print('Error')
 
 
-updater = Updater('678520764:AAG4oJ2uRlVeumCzw1-mmtAjtuvKOjgLUic')
+updater = Updater(config('KAI_TOKEN_REQUEST'))
 
 dp = updater.dispatcher
 

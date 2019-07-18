@@ -56,8 +56,18 @@ def search_avaliable_seat_task(qid):
                     c += 1
 
         if c:
-            print('Alert to admin, {} trip chatched...'.format(c))
             quote_objs.update(catched=True, status=2)
-        
+            try :
+                requests.post(
+                    "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
+                    data = {
+                        'chat_id': '@wanotif',
+                        'text': 'Catched!!\n@anderis'
+                    }, timeout = 15
+                )
+            except :
+                pass
+            # print('Alert to admin, {} trip chatched...'.format(c))
+
     
     # Pass
