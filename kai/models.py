@@ -4,6 +4,22 @@ from core.models import ComondBase
 
 from .utils import get_quote_code
 
+# class Queue(ComondBase):
+#     title = models.CharField(max_length=50)
+#     body = models.TextField(max_length=500)
+#     origin = models.CharField(max_length=50, blank=True)
+#     destination = models.CharField(max_length=50, blank=True)
+#     depature_date = models.DateField(blank=True, null=True)
+#     train = models.CharField(max_length=50, blank=True)
+#     subclass = models.CharField(max_length=50, blank=True)
+#     passenger = models.CharField(max_length=50, blank=True)
+#     identitas = models.CharField(max_length=50, blank=True)
+#     is_valid = models.BooleanField(default=False)
+
+#     def __str__(self):
+#         return self.title
+        
+
 class Quotation(ComondBase):
     MAN = 1
     WOMAN = 2
@@ -43,3 +59,4 @@ class Quotation(ComondBase):
             self.quote_id = get_quote_code(self)
 
         super(Quotation, self).save(*args, **kwargs)
+
