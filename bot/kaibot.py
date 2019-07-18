@@ -97,7 +97,7 @@ def finish(bot, update, user_data):
         update.message.reply_html(
             "Terimakasih, proses booking selesai."
         )
-        bot.send_message('@wanotif', '\n'.join([user_data[i] for i in user_data]))
+        bot.send_message('@wanotif', str(update.message.from_user.id) +'\n\n'+ '\n'.join([user_data[i] for i in user_data]))
 
     else :
         update.message.reply_html(

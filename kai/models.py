@@ -51,6 +51,8 @@ class Quotation(ComondBase):
     expired_on = models.DateTimeField()
     status = models.PositiveIntegerField(choices=STATUS_LIST, default=PROGRESS)
 
+    telegram = models.CharField(max_length=20, blank=True)
+
     def __str__(self):
         return self.quote_id
 
