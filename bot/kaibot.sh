@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec python3 kaibot.py
+exec python3 bot/kaibot.py
