@@ -1,9 +1,10 @@
 from django.contrib import admin
 
 from .models import (
-    Quotation,
+    Quotation, TrainOrder
 )
 
+admin.site.disable_action('delete_selected')
 
 @admin.register(Quotation)
 class QuotationAdmin(admin.ModelAdmin):
@@ -21,3 +22,65 @@ class QuotationAdmin(admin.ModelAdmin):
         ('Additional Info', {'fields': ['expired_on']}),
         (None, {'fields': ['telegram']})
     ]
+
+
+@admin.register(TrainOrder)
+class TrainOrderAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ['book_code']
+        }),
+        ('Origin', {
+            'fields': [('depart_name', 'depart_code'), 'depart_time']
+        }),
+        ('Destination', {
+            'fields': [('arrival_name', 'arrival_code'), 'arrival_time']
+        }),
+        ('Cost Informations', {
+            'fields': [('normal_sales', 'discount', 'extra_fee'), 'admin_fee']
+        })
+    )
+    readonly_fields = [
+        'book_code', 'status', 'quotation',
+        'normal_sales', 'discount', 'extra_fee',
+    ]
+    list_filter = ['status']
+    actions = ['confirm_action', 'cancel_action']
+    search_fields = [
+        'book_code', 'pass_name', 'pass_id', 'pay_code',
+    ]
+    list_display = [
+        'book_code',
+        'pass_name', 
+        'get_depart_display', 'get_arrival_display',
+        'depart_time', 'arrival_time',
+        'status',
+    ]
+
+    def get_depart_display(self, obj):
+        return '{} ({})'.format(obj.depart_name, obj.depart_code)
+
+    def get_arrival_display(self, obj):
+        return '{} ({})'.format(obj.arrival_name, obj.arrival_code)
+
+    get_arrival_display.short_description = 'Arrival'
+    get_depart_display.short_description = 'Departure'
+
+    def confirm_action(self, request, queryset):
+        r_update = queryset.update(status=2)
+        if r_update == 1:
+            msg_bit = '1 order was'
+        else :
+            msg_bit = '%s order were' % r_update
+        self.message_user(request, '%s successful mark to waiting payment.' % msg_bit)
+
+    def cancel_action(self, request, queryset):
+        r_update = queryset.update(status=1)
+        if r_update == 1:
+            msg_bit = '1 order was'
+        else :
+            msg_bit = '%s order were' % r_update
+        self.message_user(request, '%s successful mark to cancel.' % msg_bit)
+
+    confirm_action.short_description = 'Confirm selected train orders'
+    cancel_action.short_description = 'Cancel selected train orders'
