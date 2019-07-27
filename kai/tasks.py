@@ -1,10 +1,14 @@
 from background_task import background
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils import timezone
 from datetime import datetime
 
 from .models import (
     Quotation, TrainOrder
+)
+from utility.models import (
+    Rekening,
 )
 
 import requests
@@ -215,3 +219,24 @@ def payment_tasks(id):
             payment_time_limit_str = data['payment_time_limit'],
         )
     
+
+@background(schedule=0)
+def send_telegram_notif(id):
+    train_order_obj = TrainOrder.objects.get(pk=id)
+    bank_objs = Rekening.objects.filter(is_active=True)
+    
+    content = render_to_string(
+        'kai/telegram_notif_template_1.html', {'order': train_order_obj, 'banks': bank_objs}
+    )
+    content = content.replace('</i>\n','</i>')
+    try :
+        requests.post(
+            "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
+            data = {
+                'chat_id': train_order_obj.quotation.telegram,
+                'text': content,
+                'parse_mode': 'HTML',
+            }, timeout = 15
+        )
+    except :
+        pass

@@ -5,6 +5,9 @@ from django.utils import timezone
 
 from .utils import get_quote_code
 
+import re
+import random
+
 # class Queue(ComondBase):
 #     title = models.CharField(max_length=50)
 #     body = models.TextField(max_length=500)
@@ -107,10 +110,33 @@ class TrainOrder(ComondBase):
     payment_type = models.CharField(max_length=50, blank=True)
     payment_time_limit_str = models.CharField(max_length=50, blank=True)
     status = models.PositiveSmallIntegerField(choices=STATUS_LIST, default=1)
+    unix_code = models.IntegerField(default=0, editable=False)
 
     def __str__(self):
         return self.book_code
 
+    def save(self, *args, **kwargs):
+        if self.unix_code == 0:
+            self.unix_code = random.randrange(1,500)
 
+        super(TrainOrder, self).save(*args, **kwargs)
+
+
+    def hidden_book(self):
+        return re.sub('\w{2}$', '??', self.book_code)
+
+    def sub_total(self):
+        return '{:,.0f}'.format(self.book_balance + self.admin_fee + self.unix_code)
+
+    def get_detail_fee(self):
+        data_l = []
+        if self.book_balance:
+            data_l.append('{:,.0f} (IDR) - tiket'.format(self.book_balance))
+        if self.admin_fee:
+            data_l.append('{:,.0f} (IDR) - admin fee'.format(self.admin_fee))
+
+        data_l.append('\n<strong>{:,.0f} (IDR)</strong> + <strong>{}</strong>'.format(self.book_balance + self.admin_fee, self.unix_code))
+
+        return '\n'.join(data_l)
 
 # {"status":200,"message":"","data":{"order":{"depart":{"code":"GMR","name":"Gambir","is_portertaxi":1},"arrival":{"code":"BD","name":"Bandung","is_portertaxi":1},"depart_date_text":"28 July 2019","depart_date":"28072019","depart_time":"05:25","arrival_date_text":"28 July 2019","arrival_date":"28072019","arrival_time":"08:52","train_no":"20","book_code":"9CHFBD","num_code":"9983099416107","contact":{"phone":"082216418455","email":"anderi.setiawan@gmail.com","address":"Gambir, jakarta"},"passenger":{"adult":[{"name":"Mirota Dupo","birthdate":null,"mobile":"0822164184551","id_no":"12452145555","seat":{"class":"PREMIUM_SS","no_wagon":"1","seat":"13C"}}],"infant":[]},"seat":["PREMIUM_SS 1 13C"],"normal_sales":110000,"extra_fee":0,"book_balance":110000,"train_name":"ARGO PARAHYANGAN","class":"K","class_name":"Ekonomi","discount":0,"book_time":"26-07-2019 10:46","subclass":"C","is_near":true}}}

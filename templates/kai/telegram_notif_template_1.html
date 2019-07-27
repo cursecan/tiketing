@@ -1,0 +1,20 @@
+{% autoescape off %}
+✨ INFORMASI BOOKING
+
+🚉 {{ order.depart_name|upper }} ({{ order.depart_code}}) - {{ order.arrival_name|upper }} ({{ order.arrival_code }})
+🗓 {{ order.depart_time|date:'d M Y, H:i' }} ({{ order.depart_code }}) - {{ order.arrival_time|date:'d M Y, H:i' }} ({{ order.arrival_code }})
+
+👥 PENUMPANG :
+{{ order.pass_name|upper }} / {{ order.pass_id }}
+
+HARGA :
+{{ order.get_detail_fee }}
+
+* Tiket pemesanan anda telah tersedia dengan kode booking <strong>{{ order.hidden_book }}</strong>.
+
+** Silahkan melakukan pembayaran sebesar <strong>IDR {{ order.sub_total }}</strong> sebelum 12-12-2019 16:30 ke salah satu mode pembayaran dibawah ini.
+
+{% for b in banks %}
+<i>{{ b.bank_name }} - {{ b.rek_number }}</i>
+{% endfor %}
+{% endautoescape %}

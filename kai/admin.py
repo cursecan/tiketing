@@ -4,6 +4,10 @@ from .models import (
     Quotation, TrainOrder
 )
 
+from .tasks import (
+    send_telegram_notif,
+)
+
 admin.site.disable_action('delete_selected')
 
 @admin.register(Quotation)
@@ -67,7 +71,11 @@ class TrainOrderAdmin(admin.ModelAdmin):
     get_depart_display.short_description = 'Departure'
 
     def confirm_action(self, request, queryset):
-        r_update = queryset.update(status=2)
+        filtered_objs = queryset.filter(status=1)
+        for i in filtered_objs:
+            send_telegram_notif(i.id)
+            
+        r_update = filtered_objs.update(status=2)
         if r_update == 1:
             msg_bit = '1 order was'
         else :
@@ -75,7 +83,8 @@ class TrainOrderAdmin(admin.ModelAdmin):
         self.message_user(request, '%s successful mark to waiting payment.' % msg_bit)
 
     def cancel_action(self, request, queryset):
-        r_update = queryset.update(status=1)
+        filtered_objs = queryset.filter(status=2)
+        r_update = filtered_objs.update(status=1)
         if r_update == 1:
             msg_bit = '1 order was'
         else :
