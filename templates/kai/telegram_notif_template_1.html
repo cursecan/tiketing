@@ -12,7 +12,7 @@ HARGA :
 
 * Tiket pemesanan anda telah tersedia dengan kode booking <strong>{{ order.hidden_book }}</strong>.
 
-** Silahkan melakukan pembayaran sebesar <strong>IDR {{ order.sub_total }}</strong> sebelum 12-12-2019 16:30 ke salah satu mode pembayaran dibawah ini.
+** Silahkan melakukan pembayaran sebesar <strong>IDR {{ order.sub_total }}</strong> sebelum {{ order.payment_time_limit_str }} ke salah satu mode pembayaran dibawah ini.
 
 {% for b in banks %}
 <i>{{ b.bank_name }} - {{ b.rek_number }}</i>
