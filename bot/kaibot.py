@@ -112,13 +112,13 @@ def passenger(bot, update, user_data):
 def finish(bot, update, user_data):
     if update.message.text.upper() == 'Y':
         update.message.reply_html(
-            "Terimakasih, proses booking selesai."
+            "Proses berhasil!!\nKami akan konfirmasi Anda kembali nanti setelah tiket didapat."
         )
         bot.send_message('@wanotif', str(update.message.from_user.id) +'\n\n'+ '\n'.join([user_data[i] for i in user_data]))
 
     else :
         update.message.reply_html(
-            'Proses booking telah dibatalkan.'
+            'Permintaan booking dibatalkan.'
         )
     return ConversationHandler.END
 
@@ -132,7 +132,7 @@ def unfinish(bot, update):
 def cancel(bot, update):
     """Log Errors caused by Updates."""
     update.message.reply_html(
-        "Pemesanan Anda telah di cancel."
+        "Permintaan booking Anda telah di batalkan."
     )
     return ConversationHandler.END
 
