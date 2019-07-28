@@ -11,24 +11,14 @@ STATION, TGL, TRAIN, PASS, FINISH = range(5)
 WEB_BASE = config('WEB_BASE')
 
 
-def start(bot, update):
+def command(bot, update, args):
     rson = dict()
-    r = requests.get(WEB_BASE + '/bm/tb/start/', timeout=10)
-    if r.status_code == requests.codes.ok:
-        rson = r.json()
-    
-    update.message.reply_html(
-        rson.get('body', 'Text empty.')     
-    )
-
-def helper(bot, update):
-    rson = dict()
-    r = requests.get(WEB_BASE + '/bm/tb/help/', timeout=10)
+    r = requests.get(WEB_BASE + '/bm/tb/{}/'.format(args[0]), timeout=10)
     if r.status_code == requests.codes.ok:
         rson = r.json()
 
     update.message.reply_html(
-        rson.get('body', 'Text empty.')
+        rson.get('body', 'Maaf perintah yang dimasukan salah.')
     )
 
 def booking(bot, update):
@@ -148,8 +138,10 @@ conv_hd = ConversationHandler(
 )
 
 
-dp.add_handler(CommandHandler('start', start))
-dp.add_handler(CommandHandler('help', helper))
+dp.add_handler(CommandHandler(
+    ['start', 'help', 'howto', 'rules'], 
+    command, pass_args=True)
+)
 dp.add_handler(conv_hd)
 dp.add_error_handler(error)
 

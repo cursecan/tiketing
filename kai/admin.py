@@ -93,3 +93,7 @@ class TrainOrderAdmin(admin.ModelAdmin):
 
     confirm_action.short_description = 'Confirm selected train orders'
     cancel_action.short_description = 'Cancel selected train orders'
+
+    # def get_queryset(self, request):
+    #     qs = super(TrainOrderAdmin, self).get_queryset(request)
+    #     return qs.filter(status=1)

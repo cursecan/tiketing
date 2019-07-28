@@ -58,7 +58,7 @@ def search_avaliable_seat_task(qid):
 
             r.raise_for_status()
 
-            quote_objs.update(last_record_on=timezone.now())
+            # quote_objs.update(last_record_on=timezone.now())
 
         except:
             pass
@@ -71,27 +71,17 @@ def search_avaliable_seat_task(qid):
                         c += 1
 
         if c:
-            quote_objs.update(catched=True, status=2)
+            # Detected any quota...
+            quote_objs.update(status=3)
 
             # ## Process Booking
             booking_order(quote.id) # <<<<
 
-            try :
-                requests.post(
-                    "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
-                    data = {
-                        'chat_id': '@wanotif',
-                        'text': 'Catched!!\n@anderis'
-                    }, timeout = 15
-                )
-            except :
-                pass
-            # print('Alert to admin, {} trip chatched...'.format(c))
-
 
 @background(schedule=0)
 def booking_order(id):
-    quote_obj = Quotation.objects.get(pk=id)
+    quote_objs = Quotation.objects.filter(pk=id, catched=False)
+    quote_obj = quote_objs.get()
 
     t_obj, created = TrainOrder.objects.get_or_create(
         quotation = quote_obj
@@ -177,6 +167,8 @@ def booking_order(id):
             t_obj.train_name = data['train_name']
             t_obj.save()
 
+            quote_objs.update(catched=True, status=2)
+
             # ## Goto Payment Task <<
             payment_tasks(t_obj.id)
 
@@ -218,6 +210,17 @@ def payment_tasks(id):
             payment_type = data['payment_type'],
             payment_time_limit_str = data['payment_time_limit'],
         )
+
+        try :
+            requests.post(
+                "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
+                data = {
+                    'chat_id': '@wanotif',
+                    'text': 'Catched!!\nBooking Code : {}\n@anderis'.format(train_order_obj.book_code)
+                }, timeout = 10
+            )
+        except :
+            pass
     
 
 @background(schedule=0)
@@ -236,7 +239,7 @@ def send_telegram_notif(id):
                 'chat_id': train_order_obj.quotation.telegram,
                 'text': content,
                 'parse_mode': 'HTML',
-            }, timeout = 15
+            }, timeout = 10
         )
     except :
         pass
