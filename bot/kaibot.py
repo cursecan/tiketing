@@ -21,25 +21,25 @@ def getdata(a):
 def helpCommand(bot, update):
     a = getdata('help')
     update.message.reply_html(
-        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+        a.get('body', 'Maaf perintah yang dimasukan salah.')
     )
 
 def startCommand(bot, update):
     a = getdata('start')
     update.message.reply_html(
-        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+        a.get('body', 'Maaf perintah yang dimasukan salah.')
     )
     
 def howtoCommand(bot, update):
     a = getdata('howto')
     update.message.reply_html(
-        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+        a.get('body', 'Maaf perintah yang dimasukan salah.')
     )
 
 def rulesCommand(bot, update):
     a = getdata('rules')
     update.message.reply_html(
-        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+        a.get('body', 'Maaf perintah yang dimasukan salah.')
     )
 
 def booking(bot, update):
