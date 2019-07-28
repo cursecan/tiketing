@@ -11,12 +11,33 @@ STATION, TGL, TRAIN, PASS, FINISH = range(5)
 WEB_BASE = config('WEB_BASE')
 
 
-def command(bot, update, args):
+def getdata(a):
     rson = dict()
-    r = requests.get(WEB_BASE + '/bm/tb/{}/'.format(args[0]), timeout=10)
+    r = requests.get(WEB_BASE + '/bm/tb/{}/'.format(a), timeout=10)
     if r.status_code == requests.codes.ok:
         rson = r.json()
+    return rson
 
+def helpCommand(bot, update):
+    a = getdata('help')
+    update.message.reply_html(
+        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+    )
+
+def startCommand(bot, update):
+    a = getdata('start')
+    update.message.reply_html(
+        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+    )
+    
+def howtoCommand(bot, update):
+    a = getdata('howto')
+    update.message.reply_html(
+        rson.get('body', 'Maaf perintah yang dimasukan salah.')
+    )
+
+def rulesCommand(bot, update):
+    a = getdata('rules')
     update.message.reply_html(
         rson.get('body', 'Maaf perintah yang dimasukan salah.')
     )
@@ -138,10 +159,10 @@ conv_hd = ConversationHandler(
 )
 
 
-dp.add_handler(CommandHandler(
-    ['start', 'help', 'howto', 'rules'], 
-    command, pass_args=True)
-)
+dp.add_handler(CommandHandler('help', helpCommand))
+dp.add_handler(CommandHandler('start', startCommand))
+dp.add_handler(CommandHandler('howto', howtoCommand))
+dp.add_handler(CommandHandler('rules', rulesCommand))
 dp.add_handler(conv_hd)
 dp.add_error_handler(error)
 
