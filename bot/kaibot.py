@@ -42,6 +42,12 @@ def rulesCommand(bot, update):
         a.get('body', 'Maaf perintah yang dimasukan salah.')
     )
 
+def aboutCommand(bot, update):
+    a = getdata('about')
+    update.message.reply_html(
+        a.get('body', 'Maaf perintah yang dimasukan salah.')
+    )
+
 def booking(bot, update):
     update.message.reply_html(
         "Hi <strong>{}</strong>,\nSaya akan membantu mengawal pemesanan tiket Anda. Silahkan ikuti prosedur berikut.".format(
@@ -163,6 +169,7 @@ dp.add_handler(CommandHandler('help', helpCommand))
 dp.add_handler(CommandHandler('start', startCommand))
 dp.add_handler(CommandHandler('howto', howtoCommand))
 dp.add_handler(CommandHandler('rules', rulesCommand))
+dp.add_handler(CommandHandler('about', aboutCommand))
 dp.add_handler(conv_hd)
 dp.add_error_handler(error)
 
