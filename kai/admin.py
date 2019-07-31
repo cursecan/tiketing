@@ -12,6 +12,9 @@ admin.site.disable_action('delete_selected')
 
 @admin.register(Quotation)
 class QuotationAdmin(admin.ModelAdmin):
+    actions = [
+        'redetect_action'
+    ]
     list_display = [
         'quote_id', 'dep_code', 'des_code',
         'status',
@@ -27,6 +30,18 @@ class QuotationAdmin(admin.ModelAdmin):
         (None, {'fields': ['telegram']})
     ]
 
+
+    def redetect_action(self, request, queryset):
+        filtered_objs = queryset.filter(catched=True)
+        r_update = filtered_objs.update(status=1, catched=False)
+
+        if r_update == 1:
+            msg_bit = '1 order was'
+        else :
+            msg_bit = '%s order were' % r_update
+        self.message_user(request, '%s successful set to re-detection.' % msg_bit)
+
+    redetect_action.short_description = "Redetect selected records"
 
 @admin.register(TrainOrder)
 class TrainOrderAdmin(admin.ModelAdmin):
