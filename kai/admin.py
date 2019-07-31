@@ -59,6 +59,7 @@ class TrainOrderAdmin(admin.ModelAdmin):
         'get_depart_display', 'get_arrival_display',
         'depart_time', 'arrival_time',
         'status',
+        'payment_time_limit_str',
     ]
 
     def get_depart_display(self, obj):

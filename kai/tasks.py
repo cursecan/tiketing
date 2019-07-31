@@ -216,7 +216,7 @@ def payment_tasks(id):
                 "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
                 data = {
                     'chat_id': '@wanotif',
-                    'text': 'Catched!!\nBooking Code : {}\n@anderis'.format(train_order_obj.book_code)
+                    'text': 'Catched!!\nBooking Code : {}\n@anderis'.format(a.book_code)
                 }, timeout = 10
             )
         except :
