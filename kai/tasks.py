@@ -21,8 +21,7 @@ _token = 'Bearer ' + settings.KAI_TOKEN
 def search_avaliable_seat_task(qid):
     quote_objs = Quotation.objects.filter(
         id = qid,
-        closed = False,
-        catched = False,
+        status__in = [Quotation.PROGRESS, Quotation.DETECT],
     )
 
     if quote_objs.exists():
@@ -72,7 +71,7 @@ def search_avaliable_seat_task(qid):
 
         if c:
             # Detected any quota...
-            quote_objs.update(status=3)
+            quote_objs.update(status=Quotation.DETECT)
 
             # ## Process Booking
             booking_order(quote.id) # <<<<
@@ -80,97 +79,97 @@ def search_avaliable_seat_task(qid):
 
 @background(schedule=0)
 def booking_order(id):
-    quote_objs = Quotation.objects.filter(pk=id, catched=False)
+    quote_objs = Quotation.objects.filter(pk=id)
     quote_obj = quote_objs.get()
 
-    t_obj, created = TrainOrder.objects.get_or_create(
+    t_obj = TrainOrder.objects.create(
         quotation = quote_obj
     )
     # << Add log is already create or not
 
-    if created:
-        url = URI + '/booking_b2b'
-        payload = {
-            "org": quote_obj.dep_code,
-            "des": quote_obj.des_code,
-            "isreturn": False,
-            "dep_date": quote_obj.departure_date.strftime('%Y%m%d'),
-            "date_return":"Invalid date",
-            "train_no": quote_obj.train_code,
-            "train_no_return": 0,
-            "num_pax_adult": 1,
-            "num_pax_infant": 0,
-            "subclass": quote_obj.subclass,
-            "subclass_return":"",
-            "name": "Anderi setiawan",
-            "phone": "082216418455",
-            "email": "anderi.setiawan@gmail.com",
-            "address": "Gambir, Jakarta",
-            "passenger": {
-                "adult": [{
-                    "name": quote_obj.name,
-                    "birthdate": None,
-                    "mobile": None,
-                    "id_no": quote_obj.id_card
-                }],
-                "infant": []
-            }
+    # if created:
+    url = URI + '/booking_b2b'
+    payload = {
+        "org": quote_obj.dep_code,
+        "des": quote_obj.des_code,
+        "isreturn": False,
+        "dep_date": quote_obj.departure_date.strftime('%Y%m%d'),
+        "date_return":"Invalid date",
+        "train_no": quote_obj.train_code,
+        "train_no_return": 0,
+        "num_pax_adult": 1,
+        "num_pax_infant": 0,
+        "subclass": quote_obj.subclass,
+        "subclass_return":"",
+        "name": "Anderi setiawan",
+        "phone": "082216418455",
+        "email": "anderi.setiawan@gmail.com",
+        "address": "Gambir, Jakarta",
+        "passenger": {
+            "adult": [{
+                "name": quote_obj.name,
+                "birthdate": None,
+                "mobile": None,
+                "id_no": quote_obj.id_card
+            }],
+            "infant": []
         }
+    }
 
-        rson = dict()
+    rson = dict()
 
-        try :
-            r = requests.post(
-                url, 
-                data=json.dumps(payload),
-                headers = {'source': 'mobile', 'Content-Type': 'application/json', 'Authorization': _token},
-                timeout = 10
-            )
+    try :
+        r = requests.post(
+            url, 
+            data=json.dumps(payload),
+            headers = {'source': 'mobile', 'Content-Type': 'application/json', 'Authorization': _token},
+            timeout = 20,
+        )
 
-            #  << Add log status
-            if r.status_code == requests.codes.ok:
-                rson = r.json()
+        #  << Add log status
+        if r.status_code == requests.codes.ok:
+            rson = r.json()
 
-            r.raise_for_status()
+        r.raise_for_status()
 
-        except :
-            pass
+    except :
+        pass
 
-        # << Add log status
-        if rson.get('status', 400) == 200:
-            data = rson['data']['order']
+    # << Add log status
+    if rson.get('status', 400) == 200:
+        data = rson['data']['order']
 
-            # Completing Train Order      
-            t_obj.book_code = data['book_code']
-            t_obj.arrival_code = data['arrival']['code']
-            t_obj.arrival_name = data['arrival']['name']
-            t_obj.arrival_time = datetime.strptime(data['arrival_date'] + ' ' + data['arrival_time'], '%d%m%Y %H:%M') #
-            t_obj.depart_code = data['depart']['code']
-            t_obj.depart_name = data['depart']['name']
-            t_obj.depart_time = datetime.strptime(data['depart_date'] + ' ' + data['depart_time'], '%d%m%Y %H:%M')#
-            t_obj.book_balance = data['book_balance']
-            t_obj.book_time = datetime.strptime(data['book_time'], '%d-%m-%Y %H:%M')
-            t_obj.class_name = data['class_name']
-            t_obj.email = data['contact']['email']
-            t_obj.phone = data['contact']['phone']
-            t_obj.discount = data['discount']
-            t_obj.extra_fee = data['extra_fee']
-            t_obj.normal_sales = data['normal_sales']
-            t_obj.admin_fee = 15000
-            t_obj.pay_code = data['num_code']
-            t_obj.pass_name = data['passenger']['adult'][0]['name']
-            t_obj.pass_id = data['passenger']['adult'][0]['id_no']
-            t_obj.seat_num = data['passenger']['adult'][0]['seat']['seat']
-            t_obj.seat_name =  data['seat'][0]
-            t_obj.wagon = data['passenger']['adult'][0]['seat']['no_wagon']
-            t_obj.train_code = data['train_no']
-            t_obj.train_name = data['train_name']
-            t_obj.save()
+        # Completing Train Order      
+        t_obj.book_code = data['book_code']
+        t_obj.arrival_code = data['arrival']['code']
+        t_obj.arrival_name = data['arrival']['name']
+        t_obj.arrival_time = datetime.strptime(data['arrival_date'] + ' ' + data['arrival_time'], '%d%m%Y %H:%M') #
+        t_obj.depart_code = data['depart']['code']
+        t_obj.depart_name = data['depart']['name']
+        t_obj.depart_time = datetime.strptime(data['depart_date'] + ' ' + data['depart_time'], '%d%m%Y %H:%M')#
+        t_obj.book_balance = data['book_balance']
+        t_obj.book_time = datetime.strptime(data['book_time'], '%d-%m-%Y %H:%M')
+        t_obj.class_name = data['class_name']
+        t_obj.email = data['contact']['email']
+        t_obj.phone = data['contact']['phone']
+        t_obj.discount = data['discount']
+        t_obj.extra_fee = data['extra_fee']
+        t_obj.normal_sales = data['normal_sales']
+        t_obj.admin_fee = 15000
+        t_obj.pay_code = data['num_code']
+        t_obj.pass_name = data['passenger']['adult'][0]['name']
+        t_obj.pass_id = data['passenger']['adult'][0]['id_no']
+        t_obj.seat_num = data['passenger']['adult'][0]['seat']['seat']
+        t_obj.seat_name =  data['seat'][0]
+        t_obj.wagon = data['passenger']['adult'][0]['seat']['no_wagon']
+        t_obj.train_code = data['train_no']
+        t_obj.train_name = data['train_name']
+        t_obj.save()
 
-            quote_objs.update(catched=True, status=2)
+        quote_objs.update(status=Quotation.CATCHED)
 
-            # ## Goto Payment Task <<
-            payment_tasks(t_obj.id)
+        # ## Goto Payment Task <<
+        payment_tasks(t_obj.id)
 
 
 
