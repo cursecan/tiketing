@@ -47,7 +47,7 @@ class QuotationAdmin(admin.ModelAdmin):
 class TrainOrderAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ['book_code']
+            'fields': [('book_code', 'pay_code')]
         }),
         ('Origin', {
             'fields': [('depart_name', 'depart_code'), 'depart_time']
@@ -60,7 +60,7 @@ class TrainOrderAdmin(admin.ModelAdmin):
         })
     )
     readonly_fields = [
-        'book_code', 'status', 'quotation',
+        'book_code', 'pay_code', 'status', 'quotation',
         'normal_sales', 'discount', 'extra_fee',
     ]
     list_filter = ['status']
@@ -69,7 +69,7 @@ class TrainOrderAdmin(admin.ModelAdmin):
         'book_code', 'pass_name', 'pass_id', 'pay_code',
     ]
     list_display = [
-        'book_code',
+        'book_code', 'pay_code',
         'pass_name', 
         'get_depart_display', 'get_arrival_display',
         'depart_time', 'arrival_time',
