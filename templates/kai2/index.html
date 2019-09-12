@@ -54,7 +54,7 @@
 $(document).ready(function() {
     $('.ui.dropdown').dropdown({
         apiSettings: {
-            url: 'http://127.0.0.1:8000/kereta-api/api/cities/'
+            url: "{% url 'kai2:city_json' %}"
         },
         filterRemoteData: true
     });
