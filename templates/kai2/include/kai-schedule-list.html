@@ -1,0 +1,96 @@
+{% load humanize %}
+<div class="ui stackable grid">
+    <div class="row">
+        <div class="column">
+            <div class="ui text huge menu">
+                <div class="item">
+                    <i class="train icon"></i> {{ origin }} - {{ destination }}
+                </div>
+                <div class="item">
+                    <i class="calendar icon"></i> {{ dep }}
+                </div>
+            </div>
+            <table class="ui table">
+                <tbody>
+                    {% for i in payloads %}
+                    <tr>
+                        <td>
+                            <div class="ui sub header">{{ i.trainname }} ({{ i.noka }})</div>
+                            <span class="">{{ i.wagonclasscode }}</span>
+                        </td>
+                        <td>
+                            <div class="ui sub header">{{ i.stationnameorg }}</div>
+                            <span><i class="clock outline icon"></i> {{ i.departuretime }}</span>
+                        </td>
+                        <td>
+                            <div class="ui sub header">{{ i.stationnamedest }}</div>
+                            <span><i class="clock outline icon"></i> {{ i.arrivaltime }}</span>
+                        </td>
+                        <td>
+                            <div class="ui orange huge sub header">
+                                IDR {{ i.amount|intcomma }}
+                            </div>
+                            <!-- <span><i class="chair icon"></i> {{ i.availability }} kursi</span> -->
+                        </td>
+                        <td class="right aligned">
+                            {% if i.availability > 0%}
+                            <button class="ui tiny teal button">
+                                Booking
+                            </button>
+                            <br>
+                                {% if i.availability > 50 %}
+                                <small>Tersedia</small>
+                                {% else %}
+                                <small>{{ i.availability }} kursi</small>
+                                {% endif %}
+                            {% else %}
+                            <form id="wr-{{ forloop.counter }}" action="{% url 'kai2:checkin' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="propscheduleid" value="{{i.propscheduleid}}">
+                                <input type="hidden" name="orgcode" value="{{i.orgcode}}">
+                                <input type="hidden" name="orgid" value="{{i.orgid}}">
+                                <input type="hidden" name="destcode" value="{{i.destcode}}">
+                                <input type="hidden" name="desid" value="{{i.desid}}">
+                                <input type="hidden" name="noka" value="{{i.noka}}">
+                                <input type="hidden" name="subclass" value="{{i.subclass}}">
+                                <input type="hidden" name="subclassid" value="{{i.subclassid}}">
+                                <input type="hidden" name="wagonclasscode" value="{{i.wagonclasscode}}">
+                                <input type="hidden" name="wagonclassid" value="{{i.wagonclassid}}">
+                                <input type="hidden" name="trainname" value="{{i.trainname}}">
+                                <input type="hidden" name="tripid" value="{{i.tripid}}">
+                                <input type="hidden" name="arrivaldatetime" value="{{i.arrivaldatetime}}">
+                                <input type="hidden" name="departdatetime" value="{{i.departdatetime}}">
+                                <input type="hidden" name="stationnameorg" value="{{i.stationnameorg}}">
+                                <input type="hidden" name="stationnamedest" value="{{i.stationnamedest}}">
+                                <input type="hidden" name="amount" value="{{i.amount}}">
+                            </form>
+                            <button type="submit" form="wr-{{ forloop.counter }}" class="ui tiny orange button wl-button-js" 
+                            data-schid="{{i.propscheduleid}}"
+                            data-orgcode="{{i.orgcode}}"
+                            data-orgid="{{i.orgid}}"
+                            data-destcode="{{i.destcode}}"
+                            data-destid="{{i.desid}}"
+                            data-noka="{{i.noka}}"
+                            data-subclass="{{i.subclass}}"
+                            data-subclassid="{{i.subclassid}}"
+                            data-wagonclasscode="{{i.wagonclasscode}}"
+                            data-wagonclassid="{{i.wagonclassid}}"
+                            data-trainname="{{i.trainname}}"
+                            data-tripid="{{i.tripid}}"
+                            data-arrivaldatetime="{{i.arrivaldatetime}}"
+                            data-departdatetime="{{i.departdatetime}}"
+                            data-stationnameorg="{{i.stationnameorg}}"
+                            data-stationnamedest="{{i.stationnamedest}}">
+                                Waiting List
+                            </button>
+                            <br>
+                            <small>Habis</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

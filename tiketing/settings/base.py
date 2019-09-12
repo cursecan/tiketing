@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     'background_task',
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'kai',
     'utility',
     'botmessage',
+    'kai2',
 ]
 
 MIDDLEWARE = [
@@ -119,9 +121,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'env_root', 'static_root')
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 KAI_BASE_API = config('KAI_BASE_API')
 KAI_TOKEN = config('KAI_TOKEN')
 
+KAI_API_NEW = config('KAI_API_NEW')
+KAI_TOKEN_NEW = config('KAI_TOKEN_NEW')
+
 KAI_TOKEN_REQUEST = config('KAI_TOKEN_REQUEST')
 KAI_TOKEN_NOTIF = config('KAI_TOKEN_NOTIF')
+
+AES_KEY = config('AES_KEY')
+AES_IV = config('AES_IV')

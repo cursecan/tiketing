@@ -1,0 +1,93 @@
+{% extends 'kai2/base.html' %}
+
+{% block content %}
+<div class="ui vertical segment">
+    <div class="ui container">
+        <div class="ui segment">
+            <form action="{% url 'kai2:post_schedule' %}" method="post" class="ui form search-form-js">
+                {% csrf_token %}
+                <div class="fields equal width">
+                    <div class="field">
+                        <label for="">St. Keberangkatan</label>
+                        <div class="ui search selection dropdown">
+                            <input type="hidden" name="org">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Origin City</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="">St. Tujuan</label>
+                        <div class="ui search selection dropdown">
+                            <input type="hidden" name="dst">
+                            {{ form.destination }}
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Destination City</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="">Tanggal Berangkat</label>
+                    <div class="ui calendar" id="depart-date">
+                        <div class="ui input left icon">
+                            <i class="calendar icon"></i>
+                            <input type="text" placeholder="Date" name="depart">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="ui orange button"><i class="search icon"></i> Cari Perjalanan</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="ui vertical segment">
+    <div class="ui container" id="content-id">
+        <!-- content -->
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('.ui.dropdown').dropdown({
+        apiSettings: {
+            url: 'http://127.0.0.1:8000/kereta-api/api/cities/'
+        },
+        filterRemoteData: true
+    });
+
+    $('#depart-date')
+        .calendar({
+            monthFirst: false,
+            type: 'date',
+            formatter: {
+            date: function (date, settings) {
+                if (!date) return '';
+                var day = date.getDate();
+                var month = date.getMonth() + 1;
+                var year = date.getFullYear();
+                return year + '-' + month + '-' + day;
+            }
+            }
+        });
+
+
+    $('.search-form-js').on('submit', function() {
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: form.serialize(),
+            success: function(data) {
+                $('#content-id').html(data.html);
+            }
+        })
+        return false;
+    });
+});
+</script>
+{% endblock %}

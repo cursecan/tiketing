@@ -25,6 +25,7 @@ urlpatterns = [
     # path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/', admin.site.urls),
     path('bm/', include('botmessage.urls')),
+    path('kereta-api/', include('kai2.urls')),
 ]
 
 if not settings.DEBUG:

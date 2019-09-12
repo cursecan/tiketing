@@ -1,0 +1,56 @@
+{% extends 'kai2/base.html' %}
+
+{% block content %}
+<div class="ui vertical segment">
+    <div class="ui container">
+        <div class="ui text menu">
+            <div class="item header">
+                Booking History
+            </div>
+        </div>
+        <table class="ui striped table">
+            <tbody>
+                {% for obj in object_list %}
+                <tr onclick="window.location.href='{% url 'kai2:booking' obj.id %}'">
+                    <td>
+                        <h3 class="ui orange center aligned header" style="display: inline-block">
+                            {{ obj.checkin.orgcode}}
+                            <div class="sub header">
+                                {{ obj.checkin.stationnameorg }}
+                            </div>
+                        </h3>
+                        <!-- <h5 class="ui center aligned header" style="display: inline-block"> -->
+                            <i class="right arrow icon"></i>
+                        <!-- </h5> -->
+                        <h3 class="ui orange center aligned header" style="display: inline-block">
+                            {{ obj.checkin.destcode }}
+                            <div class="sub header">
+                                {{ obj.checkin.stationnamedest }}
+                            </div>
+                        </h3>
+                    </td>
+                    <td>
+                        <div class="ui sub header">
+                            <div class="content">KA. {{ obj.checkin.trainname }} ({{ obj.checkin.noka }})</div>
+                        </div>
+                        <span><i class="train icon"></i>{{ obj.checkin.get_wagonclasscode_display }} - Subclass {{ obj.checkin.subclass }}</span>
+                    </td>
+                    <td>
+                        <div class="ui sub header">
+                            Tanggal Berangkat
+                        </div>
+                        <span>{{ obj.checkin.departdatetime|date:"Y-m-d" }}</span> &nbsp;
+                        <span><i class="clock outline icon"></i>{{ obj.checkin.departdatetime|date:"H:i"}}</span>
+                    </td>
+                    <td>
+                        <a href="#" class="ui right ribbon label">
+                            {{ obj.get_status_display }}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

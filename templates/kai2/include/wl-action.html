@@ -1,0 +1,23 @@
+<div class="ui icon header">
+    Booking Confirmation
+</div>
+<div class="content center aligned">
+    <form id="wlform-id" action="{% url 'kai2:wl_confirm' object.id %}" method="post" class="ui form wl-action-form">
+        {% csrf_token %}
+        <div class="field center aligned">
+            <p>
+                Proses booking waiting list memakan waktu sampai tiket didapat. Apakah Anda yakin melanjutkan?
+            </p>
+        </div>
+    </form>
+</div>
+<div class="actions">
+    <button type="button" class="ui red basic cancel inverted button">
+        <i class="remove icon"></i>
+        Tidak
+    </button>
+    <button type="submit" form="wlform-id" class="ui green ok inverted button">
+        <i class="checkmark icon"></i>
+        Iya Lanjutkan
+    </button>
+</div>

@@ -1,0 +1,118 @@
+{% extends 'kai2/base.html' %}
+
+{% block content %}
+<div class="ui vertical segment">
+    <div class="ui container">
+        <div class="ui stackable equal width grid">
+            <div class="row">
+                <div class="column">
+                    <h3 class="ui header">
+                        <i class="train icon"></i>
+                        <div class="content">
+                            KA. {{ object.checkin.trainname }} ({{ object.checkin.noka }})
+                        <div class="sub header">
+                            {{ object.checkin.get_wagonclasscode_display }} - Subclass {{ object.checkin.subclass }}
+                        </div>
+                        </div>
+                    </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3 class="ui orange left floated header">
+                        {{ object.checkin.orgcode }}
+                        <div class="sub header">{{ object.checkin.stationnameorg }}</div>
+                    </h3>
+                    <h4 class="ui left floated header">
+                        <i class="right arrow icon"></i>
+                    </h4>
+                    <h3 class="ui orange left floated header">
+                        {{ object.checkin.destcode }}
+                        <div class="sub header">{{ object.checkin.stationnamedest }}</div>
+                    </h3>
+                </div>
+                <div class="column">
+                    <div class="ui sub header">
+                        Tanggal Berangkat
+                    </div>
+                    <span>{{ object.checkin.departdatetime|date:"Y-m-d" }}</span>
+                    <div class="ui sub header">
+                        Jam Berangkat
+                    </div>
+                    <span><i class="clock outline icon"></i>{{ object.checkin.departdatetime|date:"H:i" }}</span>
+                </div>
+                <div class="column">
+                    <div class="ui sub header">
+                        Tanggal Tiba
+                    </div>
+                    <span>{{ object.checkin.arrivaldatetime|date:"Y-m-d" }}</span>
+                    <div class="ui sub header">
+                        Jam Tiba
+                    </div>
+                    <span><i class="clock outline icon"></i>{{ object.checkin.arrivaldatetime|date:"H:i" }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column" id="passenger-id">
+                    <!-- Passenger Content -->
+                    {% include 'kai2/include/passenger-form.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        $('#passenger-id').on('click', '.js-wl-button', function() {
+            var btn = $(this);
+            $.ajax({
+                url: btn.attr('data-url'),
+                dataType: 'json',
+                beforeSend: function() {
+                    var modal = $('#modal-id');
+                    modal.addClass('small basic').modal('show');
+                }, success: function(data) {
+                    $('#modal-id').html(data.html);
+                }
+            });
+            return false;
+        });
+
+        $('#modal-id').on('submit', '.wl-action-form', function() {
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                dataType: 'json',
+                data: form.serialize(),
+                success: function(data) {
+                    if(data.form_is_valid) {
+                        $('#modal-id').modal('hide');
+                    }
+                }
+            });
+            return false;
+        });
+
+        $('#passenger-id').on('submit', '.js-passenger-form', function() {
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                dataType: 'json',
+                data: form.serialize(),
+                success: function(data) {
+                    if(data.form_is_valid) {
+                        $('#passenger-id').html(data.html);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+{% endblock %}

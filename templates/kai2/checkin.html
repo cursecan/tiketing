@@ -1,0 +1,58 @@
+{% extends 'kai2/base.html' %}
+
+{% block content %}
+<div class="ui vertical segment">
+    <div class="ui container">
+        <div class="ui stackable equal width grid">
+            <div class="row">
+                <div class="column">
+                    <h3 class="ui header">
+                        <i class="train icon"></i>
+                        <div class="content">
+                            KA. {{ object.trainname }} ({{ object.noka }})
+                        <div class="sub header">
+                            {{ object.get_wagonclasscode_display }} - Subclass {{ data.suclass }}
+                        </div>
+                        </div>
+                    </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3 class="ui orange left floated header">
+                        {{ object.orgcode }}
+                        <div class="sub header">{{ object.stationnameorg }}</div>
+                    </h3>
+                    <h4 class="ui left floated header">
+                        <i class="right arrow icon"></i>
+                    </h4>
+                    <h3 class="ui orange left floated header">
+                        {{ object.destcode }}
+                        <div class="sub header">{{ object.stationnamedest }}</div>
+                    </h3>
+                </div>
+                <div class="column">
+                    <div class="ui sub header">
+                        Tanggal Berangkat
+                    </div>
+                    <span>{{ object.departdatetime|date:"Y-m-d" }}</span>
+                    <div class="ui sub header">
+                        Jam Berangkat
+                    </div>
+                    <span><i class="clock outline icon"></i>{{ object.departdatetime|date:"H:i" }}</span>
+                </div>
+                <div class="column">
+                    <div class="ui sub header">
+                        Tanggal Tiba
+                    </div>
+                    <span>{{ object.arrivaldatetime|date:"Y-m-d" }}</span>
+                    <div class="ui sub header">
+                        Jam Tiba
+                    </div>
+                    <span><i class="clock outline icon"></i>{{ object.arrivaldatetime|date:"H:i" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

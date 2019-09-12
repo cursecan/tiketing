@@ -1,0 +1,47 @@
+<div class="ui text menu">
+    <div class="item header"><i class="user icon"></i> Data Penumpang</div>
+</div>
+{% if object.passengers.count == 0 %}
+<div class="ui segment">
+    <form action="{% url 'kai2:passenger' object.id  %}" method="post" class="ui form js-passenger-form">
+        {% csrf_token %}
+        <div class="equal width fields">
+            <div class="field">
+                <label for="">Nama</label>
+                {{ form.passenger_nm }}
+            </div>
+            <div class="field">
+                <label for="">No. Identitas</label>
+                {{ form.passenger_identity }}
+            </div>
+        </div>
+        <div class="field">
+            <button type="submit" class="ui orange button">Lanjutkan</button>
+        </div>
+    </form>
+</div>
+{% else %}
+    <table class="ui table">
+        <tbody>
+        {% for p in object.passengers.all %}
+            <tr>
+                <td>
+                    <div class="ui sub header">
+                        Penumpang {{ forloop.counter }}
+                    </div>
+                    <span>{{ p.passenger_nm }}</span>
+                </td>
+                <td>
+                    <div class="ui sub header">
+                        No. Identitas
+                    </div>
+                    <span>{{ p.passenger_identity }}</span>
+                </td>
+            </tr>                       
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if object.status == 1 %}
+    <button class="ui orange button js-wl-button" type="button" data-url="{% url 'kai2:wl_confirm' object.id %}">Lanjutkan</button>
+    {% endif %}
+{% endif %}
