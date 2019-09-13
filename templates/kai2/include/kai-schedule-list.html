@@ -33,17 +33,6 @@
                             <!-- <span><i class="chair icon"></i> {{ i.availability }} kursi</span> -->
                         </td>
                         <td class="right aligned">
-                            {% if i.availability > 0%}
-                            <button class="ui tiny teal button">
-                                Booking
-                            </button>
-                            <br>
-                                {% if i.availability > 50 %}
-                                <small>Tersedia</small>
-                                {% else %}
-                                <small>{{ i.availability }} kursi</small>
-                                {% endif %}
-                            {% else %}
                             <form id="wr-{{ forloop.counter }}" action="{% url 'kai2:checkin' %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="propscheduleid" value="{{i.propscheduleid}}">
@@ -64,23 +53,18 @@
                                 <input type="hidden" name="stationnamedest" value="{{i.stationnamedest}}">
                                 <input type="hidden" name="amount" value="{{i.amount}}">
                             </form>
-                            <button type="submit" form="wr-{{ forloop.counter }}" class="ui tiny orange button wl-button-js" 
-                            data-schid="{{i.propscheduleid}}"
-                            data-orgcode="{{i.orgcode}}"
-                            data-orgid="{{i.orgid}}"
-                            data-destcode="{{i.destcode}}"
-                            data-destid="{{i.desid}}"
-                            data-noka="{{i.noka}}"
-                            data-subclass="{{i.subclass}}"
-                            data-subclassid="{{i.subclassid}}"
-                            data-wagonclasscode="{{i.wagonclasscode}}"
-                            data-wagonclassid="{{i.wagonclassid}}"
-                            data-trainname="{{i.trainname}}"
-                            data-tripid="{{i.tripid}}"
-                            data-arrivaldatetime="{{i.arrivaldatetime}}"
-                            data-departdatetime="{{i.departdatetime}}"
-                            data-stationnameorg="{{i.stationnameorg}}"
-                            data-stationnamedest="{{i.stationnamedest}}">
+                            {% if i.availability > 0%}
+                            <button type="submit" form="wr-{{ forloop.counter }}" class="ui tiny teal button wl-button-js">
+                                Booking
+                            </button>
+                            <br>
+                                {% if i.availability > 50 %}
+                                <small>Tersedia</small>
+                                {% else %}
+                                <small>{{ i.availability }} kursi</small>
+                                {% endif %}
+                            {% else %}
+                            <button type="submit" form="wr-{{ forloop.counter }}" class="ui tiny orange button wl-button-js">
                                 Waiting List
                             </button>
                             <br>

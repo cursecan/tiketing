@@ -1,13 +1,13 @@
 from background_task import background
-from background_task.models import Task
 from django.conf import settings
+from django.utils import timezone
 
 from .models import (
     Booking, Checkout,
 )
 from .utils import AESCipher
 
-import json, requests
+import json, requests, time
 
 _api_base = settings.KAI_API_NEW
 _api_token = settings.KAI_TOKEN_NEW
@@ -55,7 +55,6 @@ def booking_process(obj):
             headers = headers,
             timeout = 10
         )
-
         if q.status_code == requests.codes.ok:
             qson = q.json()
 
@@ -67,7 +66,7 @@ def booking_process(obj):
             )
 
             # Process Checkout
-            url = _api_token + '/rtsngmid/py_service/mobile/checkout'
+            url = _api_base + '/rtsngmid/py_service/mobile/checkout'
             payload = {
                 "data": [cipher.encrypt(dt_payment)]
             }
@@ -95,9 +94,6 @@ def booking_process(obj):
                     obj.status = Booking.WAITPAYMENT
                     obj.save()
 
-                    # Delete Inpocess Task
-                    Task.objects.filter(verbose_name='wl-{}'.format(obj.id)).delete()
-
             except :
                 pass
         
@@ -106,8 +102,8 @@ def booking_process(obj):
 
 @background(schedule=0)
 def wl_process(id):
-    book_objs = Booking.objects.filter(pk=id, status=Booking.WAITLIST)
-    if book_objs.exists():
+    book_objs = Booking.objects.filter(pk=id)
+    if book_objs.filter(status=Booking.WAITLIST).exists():
         obj = book_objs.get()
         
         cipher = AESCipher()
