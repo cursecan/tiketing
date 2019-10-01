@@ -27,8 +27,8 @@ def booking_process(obj):
         "desid": cipher.encrypt(str(obj.checkin.desid)), 
         "orgcode": cipher.encrypt(obj.checkin.orgcode), 
         "destcode": cipher.encrypt(obj.checkin.destcode), 
-        "tripdate": cipher.encrypt(obj.checkin.departdatetime.strftime('%Y-%m-%d')), 
-        "departdate": cipher.encrypt(obj.checkin.departdatetime.strftime('%Y-%m-%d')), 
+        "tripdate": cipher.encrypt(timezone.localtime(obj.checkin.departdatetime).strftime('%Y-%m-%d')), 
+        "departdate": cipher.encrypt(timezone.localtime(obj.checkin.departdatetime).strftime('%Y-%m-%d')), 
         "noka": cipher.encrypt(obj.checkin.noka),
         "extrafee": cipher.encrypt('0'),
         "wagonclasscode": cipher.encrypt(obj.checkin.wagonclasscode),
@@ -126,7 +126,7 @@ def wl_process(id):
         payload = {
             "staorigincode": cipher.encrypt(obj.checkin.orgcode), 
             "stadestinationcode": cipher.encrypt(obj.checkin.destcode), 
-            "tripdate": cipher.encrypt(obj.checkin.departdatetime.strftime("%Y-%m-%d")),
+            "tripdate": cipher.encrypt(timezone.localtime(obj.checkin.departdatetime).strftime("%Y-%m-%d")),
         }
 
         qson = dict()
