@@ -94,6 +94,18 @@ def booking_process(obj):
                     obj.status = Booking.WAITPAYMENT
                     obj.save()
 
+                    # Telegram Notification
+                    try :
+                        requests.post(
+                            "https://api.telegram.org/bot{}/sendMessage".format(settings.KAI_TOKEN_NOTIF),
+                            data = {
+                                'chat_id': '@wanotif',
+                                'text': '@anderis\n{}-{} / PayCode {}.'.format(obj.checkin.stationnameorg, obj.checkin.stationnamedest, obj.checkout.latest('-id').paycode)
+                            }, timeout = 10
+                        )
+                    except :
+                        pass
+
             except :
                 pass
         
